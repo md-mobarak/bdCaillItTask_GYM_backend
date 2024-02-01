@@ -6,8 +6,82 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  // provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
+enum RoleEnumType {
+  MANAGER
+  USER
+  DRIVER
+  SUPER_ADMIN
+}
 
+model User {
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String
+  password  String
+  phone     String
+  avatar    String?
+  role      RoleEnumType @default(USER)
+  address   String
+  location  String
+  createAt  DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  vehicleProfiles VehicleProfile[]
+
+  @@map("users")
+}
+
+// Vehicle model
+model VehicleProfile {
+  id                     String        @id @default(auto()) @map("_id") @db.ObjectId
+  vehicle_make           String
+  vehicleName            String
+  photo                  String
+  purchase_date          String
+  registeration_date     String
+  color                  String
+  registeration_validity String
+  present_km             String
+  mileage                String
+  price                  String
+  fuel_type              String
+  body_type              String
+  model_name             String
+  registration_no        String
+  engine_no              String
+  manufacturing_date     String
+  cubic_capacity         String
+  engine_capacity        String
+  sitting_capacity       String
+  chassis_no             String
+  userId                 String        @db.ObjectId
+  user                   User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  maintenances           Maintenance[]
+  createAt               DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+
+  @@map("vehicleProfiles")
+}
+
+// Maintenance task model
+model Maintenance {
+  id                  String         @id @default(auto()) @map("_id") @db.ObjectId
+  task                String
+  repair_shop_address String
+  expense             String
+  lastDone            DateTime
+  currentDate         DateTime
+  nextDue             DateTime
+  vehicleProfileId    String         @db.ObjectId
+  vehicleProfile      VehicleProfile @relation(fields: [vehicleProfileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("maintenances")
+}

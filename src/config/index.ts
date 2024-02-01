@@ -12,8 +12,7 @@ export default {
     secret_key:'',
     accessToken: process.env.ACCESS_TOKEN as string,
     refreshToken: process.env.REFRESH_TOKEN as string,
-    
-  
+    database:process.env.DATABASE_URL,
     accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN ,
     refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
   }

@@ -156,6 +156,8 @@ model Income {
   @@map("incomes")
 }
 
+
+
 // Vehicle model
 model VehicleProfile {
   id                     String        @id @default(auto()) @map("_id") @db.ObjectId

@@ -33,6 +33,7 @@ enum IncomeType {
   OTHER
 }
 
+// User model
 model User {
   id        String       @id @default(auto()) @map("_id") @db.ObjectId
   name      String
@@ -48,55 +49,55 @@ model User {
 
   vehicleProfiles VehicleProfile[]
   salaries        Salary[]
-  trips           Trip[]
 
   @@map("users")
 }
 
+// Vehicle model
 model Vehicle {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  registration_no  String
+  id               String      @id @default(auto()) @map("_id") @db.ObjectId
+  registrationNo   String
   purchaseDate     DateTime
-  registrationDate DateTime
+  registrationDate DateTime?
   color            String
   mileage          Float
   price            Float
   tax              Float
   seatCapacicty    Int
-  isAc             Boolean
+  vehicleType      VehicleType
   brand            String
   model            String
-  fuelType         String
-  createAt         DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  fuelType         FuelType
+  createAt         DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
   trips            Trip[]
 
   @@map("vehicles")
 }
 
+// Trip model
 model Trip {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
   start_location  String
   end_location    String
   start_time      DateTime
   end_time        DateTime
-  distance        Float
   passenger_count Int
-  expense         Float
+  trip_rent       Float
   createAt        DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   //relationships 
   vehicle_id String  @db.ObjectId
   vehicle    Vehicle @relation(fields: [vehicle_id], references: [id])
-  user_id    String  @db.ObjectId
-  user       User    @relation(fields: [user_id], references: [id])
-
-  costs Cost[]
+  driver_id  String  @db.ObjectId
+  driver     Driver  @relation(fields: [driver_id], references: [id])
+  costs      Cost[]
 
   @@map("trips")
 }
 
+// Cost model
 model Cost {
   id               String          @id @default(auto()) @map("_id") @db.ObjectId
   amount           Float
@@ -115,6 +116,7 @@ model Cost {
   @@map("costs")
 }
 
+// Inventory model
 model Inventory {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
@@ -127,6 +129,7 @@ model Inventory {
   @@map("inventories")
 }
 
+// Salary model
 model Salary {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   amount      Float
@@ -141,6 +144,7 @@ model Salary {
   @@map("salaries")
 }
 
+// Income model
 model Income {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
@@ -156,7 +160,22 @@ model Income {
   @@map("incomes")
 }
 
+// Driver model
+model Driver {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  email      String
+  phone      Int
+  avatar     String
+  experience String
+  join_date  DateTime
+  Rating     String
+  address    String
 
+  createAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  trips     Trip[]
+}
 
 // Vehicle model
 model VehicleProfile {
@@ -206,4 +225,19 @@ model Maintenance {
   updatedAt DateTime @updatedAt
 
   @@map("maintenances")
+}
+
+// vehicle type enum
+enum VehicleType {
+  AC
+  NonAC
+  SlippingBus
+}
+
+//fuel type enum
+enum FuelType {
+  Petrol
+  Diesel
+  Electric
+  Hybrid
 }

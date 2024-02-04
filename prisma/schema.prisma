@@ -164,12 +164,12 @@ model Income {
 model Driver {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   name       String
-  email      String
-  phone      Int
+  email      String   @unique
+  phone      String
   avatar     String
   experience String
   join_date  DateTime
-  Rating     String
+  rating     String
   address    String
 
   createAt  DateTime @default(now())

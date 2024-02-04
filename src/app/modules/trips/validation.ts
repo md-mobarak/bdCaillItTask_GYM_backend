@@ -13,9 +13,7 @@ const createTrip = z.object({
         end_time: z.string({
             required_error: 'End_time is required'
         }).transform((value)=>new Date(value)),
-        // distance: z.number({
-        //     required_error: 'Distance is required'
-        // }),
+       
         passenger_count: z.number({
             required_error: 'Passenger_count is required'
         }),       
@@ -25,8 +23,8 @@ const createTrip = z.object({
         vehicle_id: z.string({
             required_error: 'Vehicle is required'
         }),    
-        user_id: z.string({
-            required_error: 'User is required'
+        driver_id: z.string({
+            required_error: 'Driver is required'
         }),   
     })
 });

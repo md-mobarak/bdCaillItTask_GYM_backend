@@ -3,8 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
+const express_1 = __importDefault(require("express"));
 const http_status_1 = __importDefault(require("http-status"));
 const gobalErrorHandler_1 = __importDefault(require("./app/middlewares/gobalErrorHandler"));
 const routes_1 = __importDefault(require("./app/routes"));
@@ -16,7 +16,7 @@ app.use(express_1.default.urlencoded({ extended: true }));
 //Test if api working
 app.get('/', (req, res) => {
     res.status(200).json({
-        message: 'successfully working Express Backend setup Application',
+        message: 'Successfully working Express Backend for vehicle management Application',
     });
 });
 app.use('/api/v1', routes_1.default);

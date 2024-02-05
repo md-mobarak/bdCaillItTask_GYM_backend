@@ -14,7 +14,7 @@ const ModuleRoute = [
         routes: route_2.AuthRouter
     },
     {
-        path: '/vehicleProfile',
+        path: '/vehicle',
         routes: route_1.vehicleProfileRouter
     },
     {

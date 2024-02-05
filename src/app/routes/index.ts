@@ -13,7 +13,7 @@ const ModuleRoute = [
         routes: AuthRouter
     },
      {
-        path: '/vehicleProfile',
+        path: '/vehicle',
         routes: vehicleProfileRouter
     },
     {

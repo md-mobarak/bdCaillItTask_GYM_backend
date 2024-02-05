@@ -63,7 +63,7 @@ model Vehicle {
   mileage          Float
   price            Float
   tax              Float
-  seatCapacicty    Int
+  seatCapacity     Int
   vehicleType      VehicleType
   brand            String
   model            String

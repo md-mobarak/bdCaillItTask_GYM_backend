@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 //Test if api working
 app.get('/', (req, res) => {
   res.status(200).json({
-    message: 'Successfully working Express Backend setup for vehicle management Application',
+    message: 'Successfully working Express Backend for vehicle management Application',
   });
 });
 

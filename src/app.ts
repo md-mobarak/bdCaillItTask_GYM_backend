@@ -1,5 +1,5 @@
-import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
+import express, { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import globalErrorHandler from './app/middlewares/gobalErrorHandler';
 import rootRoute from './app/routes';
@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 //Test if api working
 app.get('/', (req, res) => {
   res.status(200).json({
-    message: 'successfully working Express Backend setup Application',
+    message: 'Successfully working Express Backend setup for vehicle management Application',
   });
 });
 

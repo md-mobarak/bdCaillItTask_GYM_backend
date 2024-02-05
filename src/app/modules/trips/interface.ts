@@ -11,36 +11,8 @@ type Cost = {
         trip_id: string
 
 }
-type Vehicle = {
-       
-        registrationNo: string
-        purchaseDate: string
-        registrationDate?: string
-        color: string
-        mileage: number
-        price: number
-        tax: number
-        seatCapacicty: number
-        vehicleType: string
-        brand: string
-        model: string
-        fuelType: string
-}
 
-// type Driver = {
-//         id: string
-//         name: string
-//         email: string
-//         phone: number
-//         avatar: string
-//         experience: string
-//         join_date: string
-//         Rating: string
-//         address: string
-//         createAt?: string
-//         updatedAt?: string
-//         trips?:string
-// }
+
 export type ITripResponse = {
         id: string,
         start_location: String,

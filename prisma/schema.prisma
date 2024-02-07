@@ -16,7 +16,7 @@ enum RoleEnumType {
   MANAGER
   USER
   DRIVER
-  SUPER_ADMIN
+  ADMIN
 }
 
 enum ExpenseCategory {
@@ -88,13 +88,71 @@ model Trip {
   updatedAt       DateTime @updatedAt
 
   //relationships 
-  vehicle_id String  @db.ObjectId
-  vehicle    Vehicle @relation(fields: [vehicle_id], references: [id])
-  driver_id  String  @db.ObjectId
-  driver     Driver  @relation(fields: [driver_id], references: [id])
+  vehicle_id String     @db.ObjectId
+  vehicle    Vehicle    @relation(fields: [vehicle_id], references: [id])
+  driver_id  String     @db.ObjectId
+  driver     Driver     @relation(fields: [driver_id], references: [id])
   costs      Cost[]
+  tripCosts  TripCost[]
 
   @@map("trips")
+}
+
+// Trip cost
+model TripCost {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  passengerName String
+  phone         String
+  trip_period   String
+  tollCost      Int?
+  parkingCost   Int?
+  startLocation String
+  description   String?
+  trip_id       String   @db.ObjectId
+  trip          Trip     @relation(fields: [trip_id], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("trip_costs")
+}
+
+// office cost
+model OfficeCost {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  cost_name   String
+  amount      Int
+  description String? // Optional description of the cost
+  createdAt   DateTime @default(now()) // Timestamp when the record was created
+  updatedAt   DateTime @updatedAt // Timestamp when the record was last updated
+
+  @@map("office_costs")
+}
+
+// salary
+model driverSalary {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  driver_id   String        @db.ObjectId // Foreign key referencing the employee receiving the salary
+  amount      Float // Amount of the salary
+  currency    String // Currency of the salary (e.g., USD, EUR)
+  description String? // Optional description of the salary
+  status      SalaryProcess
+  driver      Driver        @relation(fields: [driver_id], references: [id])
+  createdAt   DateTime      @default(now()) // Timestamp when the record was created
+  updatedAt   DateTime      @updatedAt // Timestamp when the record was last updated
+
+  @@map("driver_salaries")
+}
+
+// accessory
+model Accessory {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  accessory_name String
+  amount         Int
+  description    String? // Optional description of the accessory
+  createdAt      DateTime @default(now()) // Timestamp when the record was created
+  updatedAt      DateTime @updatedAt // Timestamp when the record was last updated
+
+  @@map("accessories")
 }
 
 // Cost model
@@ -172,9 +230,10 @@ model Driver {
   rating     String
   address    String
 
-  createAt  DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  trips     Trip[]
+  createAt      DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  trips         Trip[]
+  driverSalarys driverSalary[]
 }
 
 // Vehicle model
@@ -240,4 +299,10 @@ enum FuelType {
   Diesel
   Electric
   Hybrid
+}
+
+enum SalaryProcess {
+  PENDING
+  PROCESSING
+  DONE
 }

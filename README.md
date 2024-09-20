@@ -80,3 +80,20 @@ This is the backend API for a **Gym Class Scheduling and Membership Management S
   "message": "Invalid token",
   "statusCode": 401
 }
+##🧰 Tools & Libraries Used
+TypeScript: For writing clean, maintainable, and type-safe code.
+ESLint: For code quality and consistency.
+Prettier: For code formatting.
+Nodemon: For automatic server restarts during development.
+Ts-node-dev: For running TypeScript directly in Node.js.
+Mongoose: For interacting with MongoDB.
+Express.js: Fast, unopinionated, minimalist web framework for Node.js.
+Postman: For testing the REST API during development.
+
+##👤 Author
+##Mohammad Mobarak Hossen - Full Stack Developer
+
+For any queries, feel free to reach out at mdmobarakhossen112@gmail.com or Contact +8801825639631.
+
+
+

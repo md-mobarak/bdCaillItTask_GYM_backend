@@ -1,58 +1,91 @@
-import { NextFunction, Request, Response } from "express"
-import { AuthServices } from "./service"
-import sendResponse from "../../../shared/sendResponse"
-import httpStatus from "http-status"
-import pick from "../../../shared/pick"
-import { paginationOptionFields } from "../../../common/paginationOptions"
+
+// import httpStatus from "http-status"
 
 
-const loginController = async(req:Request,res:Response,next:NextFunction)=>{
-   try {
-    const response = await AuthServices.loginService(req.body)
-    sendResponse(res,{
-        statusCode:httpStatus.OK,
-        success:true,
-        message:'Login successful',
-        data:response
-    })
-   } catch (error) {
-    next(error)
-   }
-}
+// import { Request, Response, NextFunction } from 'express';
+// import catchAsync from "../../../shared/catchAsync";
+// import UserService from './service';
+// import sendResponse from "../../../shared/sendResponse";
+// // import catchAsync from '../../shared/catchAsync';
+// // import sendResponse from '../../shared/sendResponse';
 
-const registerController = async(req:Request,res:Response,next:NextFunction)=>{
-    try {
-        const response = await AuthServices.registerService(req.body)
-        sendResponse(res,{
-            statusCode:httpStatus.OK,
-            success:true,
-            message:'Registration successful',
-            data:response
-        })
-    } catch (error) {
-        next(error)
-    }
-}
+// class UserController {
+//     // User registration
+//     registerUser = catchAsync(async (req: Request, res: Response) => {
+//         const result = await UserService.registerUser(req.body);
+//         sendResponse(res, {
+//             success: true,
+//             statusCode: 201,
+//             message: 'User registered successfully',
+//             data: result,
+//         });
+//     });
 
-const allUserControler = async(req:Request,res:Response,next:NextFunction)=>{
-    try {
-        const filterOptions = pick(req.query, ['name','email','phone','address','location'])
-        const paginationOptions = pick(req.query, paginationOptionFields)
+//     // User login
+//     loginUser = catchAsync(async (req: Request, res: Response) => {
+//         const result = await UserService.loginUser(req.body);
+//         sendResponse(res, {
+//             success: true,
+//             statusCode: 200,
+//             message: 'User logged in successfully',
+//             data: result,
+//         });
+//     });
+
+//     // Get profile for authenticated user
+//     getProfile = catchAsync(async (req: any, res: Response) => {
+//         console.log(req.user?.role);
         
-        const response = await AuthServices.getAllService(paginationOptions,filterOptions)
-        sendResponse(res, {
-            statusCode: httpStatus.OK,
-            success: true,
-            message: "Users retrieved successfully",
-            data: response,
-          });
-    } catch (error) {
-        next(error)
-    }
+//         const result = await UserService.getProfile(req.user.id);
+//         sendResponse(res, {
+//             success: true,
+//             statusCode: 200,
+//             message: 'Profile retrieved successfully',
+//             data: result,
+//         });
+//     });
+// }
+
+// export default new UserController();
+
+import { Request, Response } from 'express';
+import catchAsync from '../../../shared/catchAsync';
+import UserService from './service';
+import sendResponse from '../../../shared/sendResponse';
+import ApiError from '../../../error/ApiError';
+
+class UserController {
+    // Create user
+    createUser = catchAsync(async (req: Request, res: Response) => {
+        const user = await UserService.createUser(req.body);
+        sendResponse(res, { success: true, statusCode: 201, message: 'User created successfully', data: user });
+    });
+
+    // Get all users
+    getAllUsers = catchAsync(async (req: Request, res: Response) => {
+        const users = await UserService.getAllUsers();
+        sendResponse(res, { success: true, statusCode: 200, message: 'Users retrieved successfully', data: users });
+    });
+
+    // Get user by ID
+    getUserById = catchAsync(async (req: Request, res: Response) => {
+        const user = await UserService.getUserById(req.params.id);
+        if (!user) throw new ApiError(404, 'User not found');
+        sendResponse(res, { success: true, statusCode: 200, message: 'User retrieved successfully', data: user });
+    });
+
+    // Update user
+    updateUser = catchAsync(async (req: Request, res: Response) => {
+        const user = await UserService.updateUser(req.params.id, req.body);
+        sendResponse(res, { success: true, statusCode: 200, message: 'User updated successfully', data: user });
+    });
+
+    // Delete user
+    deleteUser = catchAsync(async (req: Request, res: Response) => {
+        const user = await UserService.deleteUser(req.params.id);
+        if (!user) throw new ApiError(404, 'User not found');
+        sendResponse(res, { success: true, statusCode: 200, message: 'User deleted successfully', data: user });
+    });
 }
 
-export const authControllers = {
-    loginController,
-    registerController,
-    allUserControler
-}
+export default new UserController();

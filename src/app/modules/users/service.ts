@@ -1,166 +1,98 @@
-// // import { Prisma, PrismaClient, RoleEnumType, User } from "@prisma/client";
-// import { comparePasswords, hashPassword } from "../../../helpers/hashPass";
-// import { JwtHelpers } from "../../../helpers/jwtHelpes";
-// import config from "../../../config";
-// import ApiError from "../../../error/ApiError";
-// import httpStatus from "http-status";
-// import { IFilters, IPaginationOptions } from "../../../interfaces/paginationOptions";
-// import { paginationHelpers } from "../../../helpers/paginationHelpers";
-// import { IGenericResponse } from "../../../interfaces/common";
-// import { IUserResponse, user_fields_constant } from "./interface";
 
 
-// // const prisma = new PrismaClient()
+// import ApiError from '../../../error/ApiError';
+// import { IUser, ILoginRequest, IAuthToken } from './interface';
+// import User from './userModel';
+// // import User from './model';
+// import bcrypt from 'bcrypt';
+// import jwt from 'jsonwebtoken';
+// // import ApiError from '../../error/ApiError';
 
-// const loginService=async(payload:any)=>{
-//     const isExist = await prisma.user.findFirst({
-//         where: {
-//             email: payload.email
+// class UserService {
+//     // User registration
+//     async registerUser(payload: IUser): Promise<IUser> {
+//         const { email, password } = payload;
+
+//         const userExists = await User.findOne({ email });
+//         if (userExists) {
+//             throw new ApiError(400, 'User already exists with this email');
 //         }
-//     })
 
-//     if (!isExist) {
-//         throw new ApiError(httpStatus.NOT_FOUND,'This user not found')
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         const user = await User.create({ ...payload, password: hashedPassword });
+
+//         return user;
 //     }
 
-//     if (payload.password === undefined) {
-//         throw new ApiError(httpStatus.NO_CONTENT,'password not given')
-//     }
+//     // User login
+//     async loginUser(payload: ILoginRequest): Promise<IAuthToken> {
+//         const { email, password } = payload;
+//         const user:any = await User.findOne({ email });
 
-//     if (isExist !== null &&
-//         payload.password !== undefined && (await comparePasswords(payload.password, isExist.password))) {
+//         if (!user || !(await bcrypt.compare(password, user.password))) {
+//             throw new ApiError(401, 'Invalid credentials');
+//         }
 
+//         const token = jwt.sign(
+//             { id: user._id, name: user.name, email: user.email, role: user.role },
+//             process.env.JWT_SECRET as string,
+//             { expiresIn: '1h' }
+//         );
 
-//         //create access token, refresh token 
-//         const data = { id: isExist.id, role:isExist.role, email: isExist.email as string }
-//         const accessToken = JwtHelpers.createToken(data,config.jwt.accessToken,config.jwt.accessTokenExpiresIn as string)
 //         return {
-//             accessToken
+//             user: { id: user._id, name: user.name, email: user.email, role: user.role },
+//             token,
+//         };
+//     }
+
+//     // Get profile for authenticated user
+//     async getProfile(userId: string): Promise<IUser> {
+//         const user = await User.findById(userId);
+//         if (!user) {
+//             throw new ApiError(404, 'User not found');
 //         }
-//         // const refreshToken = await createRefreshToken(data)
-
-//     } else {
-//         throw new ApiError(httpStatus.CONFLICT,'Password not match or invalid')
+//         return user;
 //     }
 // }
 
-// const registerService=async(payload:any)=>{
-//     let role = null
-
-//     const isExist = await prisma.user.findFirst({
-//         where:{
-//             email:payload.email
-//         }
-//     })
-
-//     if(isExist){
-//         throw new ApiError(httpStatus.CONFLICT,'This user already exist in our database');
-//     }
-
-//     const Hashed = await hashPassword(payload.password)
-//     payload.password = Hashed 
-
-//     if(payload.role != undefined || payload.role != null){
-//         role = payload.role
-//     }else {
-//         role = RoleEnumType.USER
-//     }
-
-//     const response = await prisma.user.create({
-//         data: payload
-//     })
-
-//     if(!response){
-//         throw new ApiError(400,'Registration falied')
-//     } 
-
-//     const data = { id: response.id, role:role, email: response.email as string }
-//     // const accessToken = await signJwt(data)
-//     const accessToken =  JwtHelpers.createToken(data,config.jwt.accessToken,config.jwt.accessTokenExpiresIn as string)
-//     return {
-//         accessToken
-//     }
-// }
-
-// const getAllService = async (
-//     paginatinOptions: IPaginationOptions,
-//     filterOptions: IFilters
-//   ): Promise<IGenericResponse<IUserResponse[]>> => {
-//     const { searchTerm, ...filterData } = filterOptions;
-//     const { limit, page, skip } =
-//       paginationHelpers.calculatePagination(paginatinOptions);
-  
-//     const andConditions = [];
-  
-//     //searching code
-//     if (searchTerm) {
-//       andConditions.push({
-//         OR: user_fields_constant.map(field => {
-//           return {
-//             [field]: {
-//               contains: searchTerm,
-//               mode: 'insensitive'
-//             }
-//           };
-//         })
-//       });
-//     }
-  
-//     //filtering code
-//     if (Object.keys(filterData).length > 0) {
-//       andConditions.push({
-//         AND: Object.keys(filterData).map(key => ({
-//           [key]: {
-//             equals: (filterData as any)[key]
-//           }
-//         }))
-//       });
-//     }
-
-//     const whereCondition: Prisma.UserWhereInput =
-//       andConditions.length > 0 ? { AND: andConditions } : {};
-  
-//     const result = await prisma.user.findMany({
-//       where: whereCondition,
-//       skip,
-//       take: limit,
-//       orderBy:
-//         paginatinOptions.sortBy && paginatinOptions.sortOrder
-//           ? {
-//               [paginatinOptions.sortBy]: paginatinOptions.sortOrder
-//             }
-//           : { createAt: 'asc' },
-//       select: {
-//         id: true,
-//         name:true,
-//         email:true,
-//         address:true,
-//         location:true,
-//         avatar:true,
-//         phone:true,
-//         role:true
-//       }
-//     });
-  
-//     const total = await prisma.user.count();
-  
-//     return {
-//       meta: {
-//         limit,
-//         page,
-//         total
-//       },
-//       data: result
-//     };
-//   };
+// export default new UserService();
 
 
+import ApiError from '../../../error/ApiError';
+import User from './userModel';
+import { IUser, ILoginRequest } from './interface';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
+class UserService {
+    // Create a user
+    async createUser(payload: IUser): Promise<IUser> {
+        const { email } = payload;
+        const userExists = await User.findOne({ email });
+        if (userExists) throw new ApiError(400, 'User already exists with this email');
+        const hashedPassword = await bcrypt.hash(payload.password, 10);
+        return User.create({ ...payload, password: hashedPassword });
+    }
 
+    // Get all users
+    async getAllUsers(): Promise<IUser[]> {
+        return User.find();
+    }
 
+    // Get user by ID
+    async getUserById(userId: string): Promise<IUser | null> {
+        return User.findById(userId);
+    }
 
-// export const AuthServices = {
-//     loginService,
-//     registerService,
-//     getAllService
-// }
+    // Update user
+    async updateUser(userId: string, payload: Partial<IUser>): Promise<IUser | null> {
+        return User.findByIdAndUpdate(userId, payload, { new: true });
+    }
+
+    // Delete user
+    async deleteUser(userId: string): Promise<IUser | null> {
+        return User.findByIdAndDelete(userId);
+    }
+}
+
+export default new UserService();

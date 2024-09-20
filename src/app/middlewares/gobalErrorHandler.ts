@@ -5,13 +5,11 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import config from '../../config';
 import { ZodError } from 'zod';
+import mongoose from 'mongoose';
 import { IGenericErrorMessages } from '../../interfaces/error';
 
 import handleZodError from '../../error/handleZodError';
-import handleValidationError from '../../error/handleValidationError';
-import handleClientError from '../../error/handleClientError';
 import ApiError from '../../error/ApiError';
-import { Prisma, PrismaClient } from '@prisma/client';
 
 const globalErrorHandler: ErrorRequestHandler = (
   error: any,
@@ -20,30 +18,43 @@ const globalErrorHandler: ErrorRequestHandler = (
   next: NextFunction
 ) => {
   config.env === 'development'
-    ? // eslint-disable-next-line no-console
-      console.log(`🐱‍🏍 globalErrorHandler ~~`, { error })
-    : // eslint-disable-next-line no-console
-      console.log(`🐱‍🏍 globalErrorHandler ~~`, error);
+    ? console.log(`🐱‍🏍 globalErrorHandler ~~`, { error })
+    : console.log(`🐱‍🏍 globalErrorHandler ~~`, error);
 
   let statusCode = 500;
-  let message = 'Something went wrong !';
+  let message = 'Something went wrong!';
   let errorMessages: IGenericErrorMessages[] = [];
 
-  if (error instanceof Prisma.PrismaClientValidationError) {
-    const simplifiedError = handleValidationError(error);
-    statusCode = simplifiedError.statusCode;
-    message = simplifiedError.message;
-    errorMessages = simplifiedError.errorMessages;
-  } else if (error instanceof ZodError) {
+  // Zod Validation Error
+  if (error instanceof ZodError) {
     const simplifiedError = handleZodError(error);
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
     errorMessages = simplifiedError.errorMessages;
-  } else if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    const simplifiedError = handleClientError(error);
-    statusCode = simplifiedError.statusCode;
-    message = simplifiedError.message;
-    errorMessages = simplifiedError.errorMessages;
+  
+  // Mongoose Validation Error
+  } else if (error instanceof mongoose.Error.ValidationError) {
+    statusCode = 400; // Bad Request
+    message = 'Validation Error';
+    errorMessages = Object.values(error.errors).map((el) => {
+      return {
+        path: el.path,
+        message: el.message,
+      };
+    });
+  
+  // Mongoose CastError (e.g., invalid ObjectId)
+  } else if (error instanceof mongoose.Error.CastError) {
+    statusCode = 400; // Bad Request
+    message = `Invalid ${error.path}: ${error.value}`;
+    errorMessages = [
+      {
+        path: error.path,
+        message: message,
+      },
+    ];
+  
+  // Custom API Error
   } else if (error instanceof ApiError) {
     statusCode = error?.statusCode;
     message = error.message;
@@ -55,6 +66,8 @@ const globalErrorHandler: ErrorRequestHandler = (
           },
         ]
       : [];
+  
+  // General Error
   } else if (error instanceof Error) {
     message = error?.message;
     errorMessages = error?.message
@@ -67,6 +80,7 @@ const globalErrorHandler: ErrorRequestHandler = (
       : [];
   }
 
+  // Send error response
   res.status(statusCode).json({
     success: false,
     message,

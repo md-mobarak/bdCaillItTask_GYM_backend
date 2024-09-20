@@ -1,7 +1,8 @@
 
 import express from 'express'
-
 import { AuthRouter } from '../modules/users/route'
+
+// import { AuthRouter } from '../modules/users/route'
 // import { DriverRoutes } from "../modules/drivers/driver.routes";
 // import { MaintenanceRouter } from '../modules/maintenance/route'
 // import { vehicleRouter } from '../modules/vehicle/route'

@@ -1,16 +1,28 @@
-import express from 'express';
-import validateRequest from '../../middlewares/validateUser';
-import { authControllers } from './controller';
-import { userValidation } from './validation';
+
+
+import { authorize } from '../../middlewares/Auth';
+import { UserLoginSchema } from './validation';
 
 const router = express.Router();
 
-router.post('/signIn', authControllers.loginController);
-router.post(
-  '/register',
-  validateRequest(userValidation.register),
-  authControllers.registerController
-);
-router.get('/allUser',authControllers.allUserControler)
+import express from 'express';
+import UserController from './controller';
+// import { authorize } from '../../middlewares/Auth';
 
-export const AuthRouter = router;
+
+
+router.post('/', authorize(['Admin']), UserController.createUser);
+router.get('/', authorize(['Admin']), UserController.getAllUsers);
+router.get('/:id', authorize(['Admin', 'Trainer', 'Trainee']), UserController.getUserById);
+router.put('/:id', authorize(['Admin']), UserController.updateUser);
+router.delete('/:id', authorize(['Admin']), UserController.deleteUser);
+
+
+
+export  const AuthRouter=router;
+
+
+
+
+
+

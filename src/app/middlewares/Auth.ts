@@ -37,7 +37,12 @@ export const authorize = (roles: string | string[]) => {
             req.user = decoded;
             next();
         } catch (error) {
-            return res.status(401).json({ message: 'Invalid token' });
+            return res.status(500).json({
+                success: false,
+                message: 'Unauthorized access',
+                error: error,
+            });
+
         }
     };
 };

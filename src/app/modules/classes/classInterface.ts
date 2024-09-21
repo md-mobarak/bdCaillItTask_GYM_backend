@@ -1,19 +1,11 @@
-// import { ObjectId } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
-// export interface IClass {
-//     id?: string; // Optional, will be set when fetched from the database
-//     title: string;
-//     description: string;
-//     trainerId: ObjectId; // Change to ObjectId type
-//     schedule: string; // This can be adjusted to a more complex type if needed
-// }
-
-import { Document, ObjectId } from 'mongoose';
-
-export interface IClass extends Document {
-    id?: string; // Optional, will be set when fetched from the database
-    title: string;
-    description: string;
-    trainerId: ObjectId; // Reference to the Trainer's ID
-    schedule: string; // This can be adjusted to a more complex type if needed
+export interface IClassSchedule extends Document {
+    trainerId: mongoose.Schema.Types.ObjectId; // References the Trainer (User with role 'Trainer')
+    className: string;
+    classDescription?: string;
+    classDate: Date;
+    duration: number; // In minutes
+    maxParticipants: number;
+    participants?: mongoose.Schema.Types.ObjectId[]; // List of Trainees
 }

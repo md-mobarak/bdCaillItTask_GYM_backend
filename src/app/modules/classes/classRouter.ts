@@ -1,40 +1,25 @@
-// import { Router } from 'express';
-// import {
-//     createClassHandler,
-//     getAllClassesHandler,
-//     getClassByIdHandler,
-//     updateClassHandler,
-//     deleteClassHandler
-// } from './controller';
-// import validateRequest from '../../middlewares/validateUser';
-// import { ClassSchema } from './classZodSchema';
-// import { authorize } from '../../middlewares/Auth';
-// // import {authorizeRoles }from '../../middlewares/Auth';
-
-// const router = Router();
-
-// router.post('/', validateRequest(ClassSchema), authorize('Admin'), createClassHandler);
-// router.get('/', getAllClassesHandler);
-// router.get('/:id', getClassByIdHandler);
-// router.put('/:id', validateRequest(ClassSchema), authorizeRoles('Admin'), updateClassHandler);
-// router.delete('/:id', authorize('Admin'), deleteClassHandler);
-
-// export const classRouter = router;
-
-
-import { Router } from 'express';
-
-import validateRequest from '../../middlewares/validateUser';
-import { ClassSchema } from './classZodSchema';
+import express from 'express';
+import ClassScheduleController from './classController';
 import { authorize } from '../../middlewares/Auth';
-import { createClassHandler, deleteClassHandler, getAllClassesHandler, getClassByIdHandler, updateClassHandler } from './classController';
 
-const router = Router();
+const router = express.Router();
 
-router.post('/', validateRequest(ClassSchema), authorize('Admin'), createClassHandler);
-router.get('/', getAllClassesHandler);
-router.get('/:id', getClassByIdHandler);
-router.put('/:id', validateRequest(ClassSchema), authorize('Admin'), updateClassHandler);
-router.delete('/:id', authorize('Admin'), deleteClassHandler);
+// Create class schedule (Trainer)
+router.post('/', authorize(['Trainer']), ClassScheduleController.createClassSchedule);
 
-export const classRouter = router;
+// Get all class schedules (Admin, Trainer)
+router.get('/', authorize(['Admin', 'Trainer']), ClassScheduleController.getAllClassSchedules);
+
+// Get class schedules by trainer ID (Trainer)
+router.get('/trainer', authorize(['Trainer']), ClassScheduleController.getClassSchedulesByTrainer);
+
+// Get class schedule by ID (Admin, Trainer, Trainee)
+router.get('/:id', authorize(['Admin', 'Trainer', 'Trainee']), ClassScheduleController.getClassScheduleById);
+
+// Update class schedule (Trainer)
+router.put('/:id', authorize(['Trainer']), ClassScheduleController.updateClassSchedule);
+
+// Delete class schedule (Admin)
+router.delete('/:id', authorize(['Admin']), ClassScheduleController.deleteClassSchedule);
+
+export const ClassScheduleRouter = router;

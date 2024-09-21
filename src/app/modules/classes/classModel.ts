@@ -1,28 +1,18 @@
+import mongoose, { Schema } from 'mongoose';
+import { IClassSchedule } from './classInterface';
+// import { IClassSchedule } from './classScheduleInterface';
 
-
-import { Schema, model, Document } from 'mongoose';
-import { IClass } from './classInterface';
-
-const ClassSchema = new Schema<IClass>({
-    title: {
-        type: String,
-        required: true,
+const classScheduleSchema: Schema = new Schema(
+    {
+        trainerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+        className: { type: String, required: true },
+        classDescription: { type: String },
+        classDate: { type: Date, required: true },
+        duration: { type: Number, required: true }, // Duration in minutes
+        maxParticipants: { type: Number, required: true },
+        participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     },
-    description: {
-        type: String,
-        required: true,
-    },
-    trainerId: {
-        type: Schema.Types.ObjectId, // Keep this as is
-        ref: 'Trainer', // Reference to the Trainer model
-        required: true,
-    },
-    schedule: {
-        type: String, // Adjust according to your scheduling needs
-        required: true,
-    },
-}, { timestamps: true });
+    { timestamps: true }
+);
 
-const ClassModel = model<IClass & Document>('Class', ClassSchema);
-
-export default ClassModel;
+export const ClassSchedule = mongoose.model<IClassSchedule>('ClassSchedule', classScheduleSchema);

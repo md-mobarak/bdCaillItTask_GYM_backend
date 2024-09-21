@@ -1,24 +1,39 @@
-// import ClassModel from '../../models'; // Adjust according to your model path
+// import { ClassSchedule } from './classScheduleModel';
+// import { IClassSchedule } from './classScheduleInterface';
+import ApiError from '../../../error/ApiError';
+import { IClassSchedule } from './classInterface';
+import { ClassSchedule } from './classModel';
 
-import ClassModel from "./classModel";
+class ClassScheduleServices {
+    // Create a class schedule (Trainer)
+    async createClassSchedule(payload: IClassSchedule): Promise<IClassSchedule> {
+        return ClassSchedule.create(payload);
+    }
 
-export const createClass = async (classData: any) => {
-    const newClass = new ClassModel(classData);
-    return await newClass.save();
-};
+    // Get all class schedules (Admin and Trainer)
+    async getAllClassSchedules(): Promise<IClassSchedule[]> {
+        return ClassSchedule.find();
+    }
 
-export const getAllClasses = async () => {
-    return await ClassModel.find().populate('trainerId'); // Populate trainer info if necessary
-};
+    // Get class schedules by trainer ID (Trainer)
+    async getClassSchedulesByTrainer(trainerId: string): Promise<IClassSchedule[]> {
+        return ClassSchedule.find({ trainerId });
+    }
 
-export const getClassById = async (id: string) => {
-    return await ClassModel.findById(id).populate('trainerId');
-};
+    // Get class schedule by ID (Admin, Trainer, Trainee)
+    async getClassScheduleById(scheduleId: string): Promise<IClassSchedule | null> {
+        return ClassSchedule.findById(scheduleId);
+    }
 
-export const updateClass = async (id: string, classData: any) => {
-    return await ClassModel.findByIdAndUpdate(id, classData, { new: true });
-};
+    // Update class schedule (Trainer)
+    async updateClassSchedule(scheduleId: string, payload: Partial<IClassSchedule>): Promise<IClassSchedule | null> {
+        return ClassSchedule.findByIdAndUpdate(scheduleId, payload, { new: true });
+    }
 
-export const deleteClass = async (id: string) => {
-    return await ClassModel.findByIdAndDelete(id);
-};
+    // Delete class schedule (Admin)
+    async deleteClassSchedule(scheduleId: string): Promise<IClassSchedule | null> {
+        return ClassSchedule.findByIdAndDelete(scheduleId);
+    }
+}
+
+export default new ClassScheduleServices();

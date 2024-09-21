@@ -1,99 +1,76 @@
-# 🏋️ Gym Class Scheduling & Membership Management System (Backend)
+# Gym Class Scheduling and Membership Management System
 
-This is the backend API for a **Gym Class Scheduling and Membership Management System** built using **Node.js**, **Express.js**, **TypeScript**, and **Mongoose**. The system allows **Admins** to manage trainers and gym class schedules, **Trainers** to view their schedules, and **Trainees** to book classes.
+![Gym Management System](link_to_your_image) <!-- Add a relevant image link here -->
 
-## 🚀 Features
+## Project Overview
 
-- 🔐 **JWT-based Authentication**: Secure login system with access and refresh tokens.
-- 🧑‍💼 **Role-based Access Control**: Admin, Trainer, and Trainee roles with specific permissions.
-- 📅 **Class Scheduling**: Admins can create, update, and delete gym class schedules.
-- 📝 **Booking System**: Trainees can browse and book available classes.
-- 🛡️ **Error Handling & Validation**: Robust error messages and input validation.
-- 📊 **Scalable API Design**: Built with a modular architecture to allow for future expansion.
-- 🗂 **CRUD Operations**: Fully functional Create, Read, Update, Delete operations for managing users and schedules.
+The Gym Class Scheduling and Membership Management System is designed to efficiently manage gym operations, catering to three user roles: Admin, Trainer, and Trainee. This system facilitates class scheduling, booking, and profile management, ensuring a smooth experience for both trainers and trainees while maintaining strict adherence to business rules.
 
-## 🛠️ Technologies Used
+## Technology Stack
 
-- **Node.js**: Backend runtime environment.
-- **Express.js**: Web framework for building RESTful APIs.
-- **TypeScript**: Ensures type safety and scalability.
-- **Mongoose**: MongoDB ODM for database management.
-- **MongoDB Atlas**: Cloud-based database for storing user data and schedules.
-- **JWT**: JSON Web Tokens for secure authentication.
-- **Bcrypt**: Hashing library for secure password management.
-- **Dotenv**: For environment variable management.
+- **Programming Language:** TypeScript
+- **Web Framework:** Express.js
+- **ORM/ODM:** Prisma/Mongoose
+- **Database:** MongoDB/PostgreSQL
+- **Authentication:** JWT (JSON Web Tokens)
 
----
+## Live Hosting Link
 
-## 📚 API Documentation
+Access the live application [here](https://gymbackend.vercel.app/api/v1).
 
-### Base URL: `http://localhost:5000/`
+## API Endpoints
 
-### 🔐 Authentication Routes
+### Authentication
+- **POST** `https://gymbackend.vercel.app/api/v1/auth/register` - Register a new user
+- **POST** `https://gymbackend.vercel.app/api/v1/auth/login` - User login
+- **GET** `https://gymbackend.vercel.app/api/v1/auth/users` - Get all users (Admin only)
+- **GET** `https://gymbackend.vercel.app/api/v1/auth/trainers` - Get trainers (Admin only)
+- **GET** `https://gymbackend.vercel.app/api/v1/auth/:id` - Get user by ID (Admin/Trainee)
+- **PUT** `https://gymbackend.vercel.app/api/v1/auth/:id` - Update user (Admin/Trainee)
+- **DELETE** `https://gymbackend.vercel.app/api/v1/auth/:id` - Delete user (Admin/Trainee)
 
-| Method | Endpoint        | Description                 |
-|--------|-----------------|-----------------------------|
-| POST   | `/auth/register` | Register a new trainee      |
-| POST   | `/auth/login`    | Log in and get JWT tokens   |
+### Class Scheduling
+- **POST** `https://gymbackend.vercel.app/api/v1/class` - Create a class schedule (Admin only)
+- **GET** `https://gymbackend.vercel.app/api/v1/class` - Get all class schedules (Admin, Trainer, Trainee)
+- **GET** `https://gymbackend.vercel.app/api/v1/class/:id` - Get class schedule by ID (Admin, Trainer, Trainee)
+- **PATCH** `https://gymbackend.vercel.app/api/v1/class/:id` - Update class schedule (Admin only)
+- **DELETE** `https://gymbackend.vercel.app/api/v1/class/:id` - Delete class schedule (Admin only)
 
-### 🧑‍💼 Admin Routes
+### Booking
+- **POST** `https://gymbackend.vercel.app/api/v1/booking` - Book a class schedule (Trainee only)
+- **GET** `https://gymbackend.vercel.app/api/v1/booking` - Get all bookings (Admin, Trainee)
+- **GET** `https://gymbackend.vercel.app/api/v1/booking/:id` - Get booking by ID (Admin, Trainee)
+- **DELETE** `https://gymbackend.vercel.app/api/v1/booking/:id` - Cancel booking (Trainee only)
 
-| Method | Endpoint               | Description                          |
-|--------|------------------------|--------------------------------------|
-| POST   | `/admin/trainers`       | Create a new trainer                 |
-| PUT    | `/admin/trainers/:id`   | Update a trainer's details           |
-| DELETE | `/admin/trainers/:id`   | Delete a trainer                     |
-| POST   | `/admin/schedules`      | Create a new class schedule          |
-| GET    | `/admin/schedules`      | View all class schedules             |
-| PUT    | `/admin/schedules/:id`  | Update a class schedule              |
-| DELETE | `/admin/schedules/:id`  | Delete a class schedule              |
+## Business Rules
 
-### 🧑‍🏫 Trainer Routes
+- Admins can create and manage trainers, with a limit of 5 class schedules per day.
+- Each class can accommodate up to 10 trainees.
+- Trainees can only book classes if slots are available and cannot book more than one class per time slot.
+- Proper error handling is implemented for validation errors, unauthorized access, and booking limit violations.
 
-| Method | Endpoint               | Description                          |
-|--------|------------------------|--------------------------------------|
-| GET    | `/trainer/schedules`    | View assigned schedules              |
+## Database Schema
 
-### 🧑‍💪 Trainee Routes
+![Database Schema](link_to_your_relational_diagram) <!-- Add a relational diagram link here -->
 
-| Method | Endpoint               | Description                          |
-|--------|------------------------|--------------------------------------|
-| GET    | `/trainee/schedules`    | View available class schedules       |
-| POST   | `/trainee/book`         | Book a class                        |
-| DELETE | `/trainee/cancel`       | Cancel a booked class               |
+## Admin Credentials
 
----
+- **Email:** admin@example.com
+- **Password:** password123
 
-## 🛡️ Error Handling
+## Instructions to Run Locally
 
-- **400** Bad Request: Occurs when the client sends invalid data or an incomplete request.
-- **401** Unauthorized: Returned if the user attempts to access a route without a valid token.
-- **403** Forbidden: Returned if the user attempts to access a resource they do not have permission for.
-- **404** Not Found: Returned when a requested resource is not found in the system.
-- **500** Internal Server Error: Returned for unexpected server errors.
-
-### Example Response (Error)
-
-```json
-{
-  "error": "Unauthorized access",
-  "message": "Invalid token",
-  "statusCode": 401
-}
-##🧰 Tools & Libraries Used
-TypeScript: For writing clean, maintainable, and type-safe code.
-ESLint: For code quality and consistency.
-Prettier: For code formatting.
-Nodemon: For automatic server restarts during development.
-Ts-node-dev: For running TypeScript directly in Node.js.
-Mongoose: For interacting with MongoDB.
-Express.js: Fast, unopinionated, minimalist web framework for Node.js.
-Postman: For testing the REST API during development.
-
-##👤 Author
-##Mohammad Mobarak Hossen - Full Stack Developer
-
-For any queries, feel free to reach out at mdmobarakhossen112@gmail.com or Contact +8801825639631.
-
-
+1. Clone the repository:
+   ```bash
+   git clone https:https://github.com/md-mobarak/bdCaillItTask_GYM_backend
+   cd gym-management-backend
+   ## npm install
+   ## npm start
+# Testing Instructions
+. Use the admin credentials provided to log in.
+. Test key features such as:
+. Creating trainers
+. Scheduling classes
+. Booking classes
+. Viewing and managing bookings
 

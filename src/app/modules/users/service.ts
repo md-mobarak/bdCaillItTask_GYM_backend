@@ -49,7 +49,14 @@ class UserService {
             token,
         };
     }
+   async getAllTrainers(role:string){
+    const Trainer = await User.find({role:'Trainer'});
+    if (!Trainer) {
+        throw new ApiError(404, 'trainer not found');
+    }
+    return Trainer;
 
+   }
     // Get profile for authenticated user
     async getProfile(userId: string): Promise<IUser> {
         const user = await User.findById(userId);

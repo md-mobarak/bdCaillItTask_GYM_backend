@@ -19,6 +19,20 @@
 // export const BookingRouter = router;
 
 
+// import express from 'express';
+// import { authorize } from '../../middlewares/Auth';
+// import bookingController from './bookingController';
+
+// const router = express.Router();
+
+// router.post('/', authorize(['Trainee']), bookingController.createBooking);
+// router.get('/', authorize(['Admin', 'Trainee']), bookingController.getAllBookings);
+// router.get('/:id', authorize(['Admin', 'Trainee']), bookingController.getBookingById);
+// router.delete('/:id', authorize(['Admin', 'Trainee']), bookingController.cancelBooking);
+
+// export const BookingRouter = router;
+
+
 import express from 'express';
 import { authorize } from '../../middlewares/Auth';
 import bookingController from './bookingController';
@@ -31,3 +45,4 @@ router.get('/:id', authorize(['Admin', 'Trainee']), bookingController.getBooking
 router.delete('/:id', authorize(['Admin', 'Trainee']), bookingController.cancelBooking);
 
 export const BookingRouter = router;
+

@@ -16,7 +16,7 @@ The Gym Class Scheduling and Membership Management System is designed to efficie
 
 ## Live Hosting Link
 
-Access the live application [here](https://gymbackend.vercel.app/api/v1).
+Access the live application [here](https://gymbackend.vercel.app).
 
 ## API Endpoints
 

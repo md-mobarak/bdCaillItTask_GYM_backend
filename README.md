@@ -53,10 +53,7 @@ Access the live application [here](https://gymbackend.vercel.app/api/v1).
 
 ![Database Schema](link_to_your_relational_diagram) <!-- Add a relational diagram link here -->
 
-## Admin Credentials
 
-- **Email:** admin@example.com
-- **Password:** password123
 
 ## Instructions to Run Locally
 
